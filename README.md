@@ -1,6 +1,26 @@
-# React + TypeScript + Vite
+# ASCII Video Converter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web application that converts videos to ASCII art animations using React, TypeScript, Vite, and Tailwind CSS v4.
+
+## Features
+
+- Convert videos to ASCII art
+- Progressive Web App (PWA) support
+- Modern React setup with TypeScript
+- Tailwind CSS v4 for styling
+- Optimized Vite build process
+
+## Deployment
+
+This project is automatically deployed to GitHub Pages using GitHub Actions. The deployment happens automatically when changes are pushed to the main branch.
+
+### Live Demo
+The app is available at: https://progmars.github.io/ascii-video/
+
+### Deployment Configuration
+- **Base URL**: `/ascii-video/` (configured in `vite.config.ts`)
+- **GitHub Actions**: Automatic deployment via `.github/workflows/deploy.yml`
+- **Build Output**: Static files in `dist/` directory
 
 Currently, two official plugins are available:
 

@@ -11,28 +11,50 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['vite.svg'],
+      includeAssets: ['icon.svg'],
+      strategies: 'generateSW',
       manifest: {
         name: 'ASCII Video Converter',
         short_name: 'ASCII Video',
-        description: 'Convert videos to ASCII art animations',
+        description: 'Transform standard MP4 videos into ASCII art animations',
         theme_color: '#242424',
         background_color: '#242424',
         display: 'standalone',
         start_url: '/ascii-video/',
         icons: [
           {
-            src: 'vite.svg',
+            src: 'icon.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
+            purpose: 'any maskable'
           },
           {
-            src: 'vite.svg',
+            src: 'icon.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-          },
-        ],
+            purpose: 'any maskable'
+          }
+        ]
       },
-    }),
-  ],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
+    })
+  ]
 })

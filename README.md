@@ -1,14 +1,24 @@
 # ASCII Video Converter
 
-A modern web application that converts videos to ASCII art animations using React, TypeScript, Vite, and Tailwind CSS v4.
+A Progressive Web Application (PWA) that transforms standard MP4 videos into ASCII art animations, providing users with a unique and artistic way to view video content through text-based representations.
 
 ## Features
 
-- Convert videos to ASCII art
-- Progressive Web App (PWA) support
-- Modern React setup with TypeScript
-- Tailwind CSS v4 for styling
-- Optimized Vite build process
+- **Video Upload**: Drag-and-drop or file selection for MP4 videos (max 10MB)
+- **Customizable Conversion**: Adjust resolution and character sets for different ASCII effects
+- **Real-time Preview**: See preview frames during conversion process
+- **Full Playback Controls**: Play, pause, seek, volume control, and fullscreen mode
+- **Color Support**: Preserves color information in the ASCII output for visually rich animations
+- **Offline Support**: Works offline as a Progressive Web App (PWA)
+- **Responsive Design**: Mobile-friendly interface that works on all devices
+
+## Technology Stack
+
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS v4
+- **PWA**: Service Worker with offline capabilities
+- **Deployment**: GitHub Pages
 
 ## Deployment
 

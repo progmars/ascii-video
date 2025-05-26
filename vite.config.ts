@@ -14,8 +14,8 @@ export default defineConfig({
       includeAssets: ['icon.svg'],
       strategies: 'generateSW',
       manifest: {
-        name: 'ASCII Video Converter',
-        short_name: 'ASCII Video',
+        name: 'YAUVA - Yet Another Useless Video ASCII-nator',
+        short_name: 'YAUVA',
         description: 'Transform standard MP4 videos into ASCII art animations',
         theme_color: '#242424',
         background_color: '#242424',

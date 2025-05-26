@@ -1,6 +1,6 @@
 {
-  "name": "ASCII Video Converter",
-  "short_name": "ASCII Video",
+  "name": "YAUVA - Yet Another Useless Video ASCII-nator",
+  "short_name": "YAUVA",
   "description": "Transform standard MP4 videos into ASCII art animations",
   "start_url": "/ascii-video/",
   "display": "standalone",

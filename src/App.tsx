@@ -52,7 +52,7 @@ function App() {
       {/* Header */}
       <header className="bg-blue-600 text-white p-4 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">ASCII Video Converter</h1>
+          <h1 className="text-2xl font-bold">YAUVA - Yet Another Useless Video ASCII-nator</h1>
           
           {/* Tabs */}
           <nav className="flex space-x-1">
@@ -187,7 +187,7 @@ function App() {
       
       {/* Footer */}
       <footer className="py-4 px-6 bg-gray-200 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
-        <p>ASCII Video Converter v1.0 | Created with React + Vite + Tailwind CSS</p>
+        <p>YAUVA - Yet Another Useless Video ASCII-nator v1.0 | Created with React + Vite + Tailwind CSS</p>
       </footer>
     </div>
   )

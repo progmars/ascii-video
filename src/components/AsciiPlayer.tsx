@@ -211,21 +211,20 @@ const AsciiPlayer = ({ frames, fps, audio, onEnded }: AsciiPlayerProps) => {
           <span>{formatTime(duration)}</span>
         </div>
         
-        {/* Control Buttons */}
-        <div className="flex items-center justify-between">
+        {/* Control Buttons */}        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* Play/Pause Button */}
             <button 
               onClick={togglePlayPause}
-              className="text-white hover:text-blue-400 focus:outline-none"
+              className="bg-blue-700 hover:bg-blue-800 text-white p-3 rounded-full shadow-lg transition-all hover:scale-105 focus:outline-none"
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                 </svg>
               ) : (
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7-11-7z" />
                 </svg>
               )}

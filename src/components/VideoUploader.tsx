@@ -122,15 +122,12 @@ const VideoUploader = ({ onVideoSelected, isProcessing }: VideoUploaderProps) =>
           <div className="text-xl font-medium">
             {isDragging ? 'Drop your video here' : 'Drag & drop your video here'}
           </div>
-          
-          <div className="text-gray-500 dark:text-gray-400">
+            <div className="text-gray-500 dark:text-gray-400">
             or
-          </div>
-          
-          <button
+          </div>            <button
             type="button"
             disabled={isProcessing}
-            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`px-4 py-2 bg-blue-800 dark:bg-blue-700 text-white font-bold rounded-md hover:bg-blue-900 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm ${
               isProcessing ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >

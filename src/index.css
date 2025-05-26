@@ -24,8 +24,6 @@
   a:hover {
     color: #747bff;
   }
-
-  button {
-    background-color: #f9f9f9;
-  }
+  
+  /* Removed button background override to allow Tailwind classes to work properly */
 }

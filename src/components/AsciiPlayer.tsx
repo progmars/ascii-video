@@ -29,8 +29,7 @@ const AsciiPlayer = ({ frames, fps, audio, onEnded }: AsciiPlayerProps) => {
   useEffect(() => {
     setDuration(frames.length / fps);
   }, [frames, fps]);
-  
-  // Handle fullscreen
+    // Handle fullscreen
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement));
@@ -41,6 +40,111 @@ const AsciiPlayer = ({ frames, fps, audio, onEnded }: AsciiPlayerProps) => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+    // Handle resize and adjust scaling of the ASCII content
+  useEffect(() => {
+    if (!playerRef.current || !frames.length || currentFrame >= frames.length) return;      // Function to calculate scale
+    const adjustScale = () => {
+      const asciiContent = playerRef.current?.querySelector('.ascii-content') as HTMLElement;
+      if (!asciiContent) {
+        console.log('ASCII content not found');
+        return;
+      }
+      
+      const playerContainer = playerRef.current;
+      if (!playerContainer) return;
+        // Get container dimensions (accounting for padding and safety margin)
+      const containerWidth = playerContainer.clientWidth - 24; // Account for p-1 plus safety margin
+      const containerHeight = playerContainer.clientHeight - 24;
+      
+      // Get content dimensions
+      const contentWidth = asciiContent.scrollWidth;
+      const contentHeight = asciiContent.scrollHeight;
+      
+      console.log('Container:', { containerWidth, containerHeight });
+      console.log('Content:', { contentWidth, contentHeight });
+      
+      // Calculate scale factors
+      const scaleX = containerWidth / contentWidth;
+      const scaleY = containerHeight / contentHeight;
+      let scale = Math.min(scaleX, scaleY);      // For low-resolution content, be more conservative with scaling to prevent cropping
+      if (frames.length > 0 && currentFrame < frames.length) {
+        const frameWidth = frames[currentFrame].width;
+        console.log('Frame width:', frameWidth);
+        
+        if (frameWidth < 60) {
+          // Low resolution - moderate boost to prevent cropping
+          scale = Math.min(scaleX * 1.4, scaleY * 1.4);
+          console.log('Low resolution scaling applied');
+        } else if (frameWidth < 100) {
+          // Medium resolution - slight boost
+          scale = Math.min(scaleX * 1.15, scaleY * 1.15);
+          console.log('Medium resolution scaling applied');
+        }
+        
+        // Ensure minimum scale for very small content, but be more conservative
+        if (scale < 0.7) {
+          scale = Math.min(1.5, scale * 1.8);
+          console.log('Minimum scale boost applied');
+        }
+      }
+        // Cap maximum scale to prevent cropping and pixelation
+      scale = Math.min(scale, 2.5);
+      // Ensure minimum scale
+      scale = Math.max(scale, 0.5);
+      
+      // Final safety check: ensure scaled content won't exceed container
+      const scaledWidth = contentWidth * scale;
+      const scaledHeight = contentHeight * scale;
+      if (scaledWidth > containerWidth || scaledHeight > containerHeight) {
+        const safeScaleX = containerWidth / contentWidth * 0.95; // 5% safety margin
+        const safeScaleY = containerHeight / contentHeight * 0.95;
+        scale = Math.min(safeScaleX, safeScaleY);
+        console.log('Applied safety scaling to prevent cropping:', scale);
+      }
+      
+      console.log('Final calculated scale:', scale);
+      
+      // Apply scale transform to the ASCII wrapper
+      const asciiWrapper = playerRef.current?.querySelector('.ascii-wrapper') as HTMLElement;
+      if (asciiWrapper) {
+        asciiWrapper.style.transform = `scale(${scale})`;
+        asciiWrapper.style.transformOrigin = 'center';
+        console.log('Applied scale to ascii-wrapper:', scale);
+      } else {
+        // Fallback: apply directly to ASCII content
+        asciiContent.style.transform = `scale(${scale})`;
+        asciiContent.style.transformOrigin = 'center';
+        console.log('Applied scale directly to content:', scale);
+      }
+    };
+      // Initial adjustment
+    adjustScale();
+    
+    // Set up resize observer
+    const resizeObserver = new ResizeObserver(() => {
+      adjustScale();
+    });
+    
+    if (playerRef.current) {
+      resizeObserver.observe(playerRef.current);
+    }
+    
+    // Also re-adjust on frame change
+    const handleFrameChange = () => {
+      // Small delay to ensure the DOM has updated with the new frame content
+      setTimeout(() => {
+        adjustScale();
+      }, 0);
+    };
+    
+    // Reset observer when frame changes
+    handleFrameChange();
+    
+    // Clean up
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [frames, currentFrame, isFullscreen]);
   
   // Handle audio volume
   useEffect(() => {
@@ -143,8 +247,7 @@ const AsciiPlayer = ({ frames, fps, audio, onEnded }: AsciiPlayerProps) => {
     const seconds = Math.floor(timeInSeconds % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
-  
-  // Render current frame
+    // Render current frame
   const renderCurrentFrame = () => {
     if (!frames.length || currentFrame >= frames.length) return null;
     
@@ -173,27 +276,70 @@ const AsciiPlayer = ({ frames, fps, audio, onEnded }: AsciiPlayerProps) => {
       );
     }
     
-    return <div className="font-mono text-xs leading-none">{lines}</div>;
+    // Adjust line height and character spacing based on frame width (resolution)
+    const frameWidth = frames[currentFrame].width;
+    const trackingClass = frameWidth < 60 
+      ? 'tracking-[-0.1em]'  // More compact spacing for low resolution
+      : 'tracking-[-0.05em]'; // Normal spacing for higher resolution
+      
+    const leadingValue = frameWidth < 60 
+      ? '0.7'  // Tighter line height for low resolution
+      : '0.75'; // Normal line height for higher resolution
+      
+    return <div className={`ascii-content font-mono w-fit mx-auto ${trackingClass}`} style={{ lineHeight: leadingValue }}>{lines}</div>;
+  };  // Calculate responsive font size based on container width and frame width
+  const calculateFontSize = () => {
+    if (!frames.length) return isFullscreen ? '0.8vw' : 'inherit';
+    
+    // Get current frame width/resolution if available
+    const currentFrameWidth = frames[0]?.width || 80;
+    
+    // Adjust font size based on resolution - smaller for higher resolution
+    // and larger for lower resolution to fill the space better
+    if (isFullscreen) {
+      return currentFrameWidth < 60 ? '1vw' : '0.8vw'; // Larger font for lower resolution in fullscreen
+    } else {
+      // For low resolution (width < 60), use larger font
+      if (currentFrameWidth < 60) {
+        return 'clamp(0.7rem, 1.5vw, 1.8rem)'; // Much larger for low resolution
+      } else if (currentFrameWidth < 100) {
+        return 'clamp(0.6rem, 1.3vw, 1.5rem)'; // Medium size for medium resolution
+      } else {
+        return 'clamp(0.5rem, 1.0vw, 1.2rem)'; // Smaller for high resolution
+      }
+    }
   };
 
   return (
     <div ref={containerRef} className="w-full max-w-4xl mx-auto bg-black rounded-lg shadow-lg overflow-hidden">
-      {/* ASCII Display Area */}
-      <div 
+      {/* ASCII Display Area */}      <div 
         ref={playerRef}
-        className="bg-black p-4 overflow-auto aspect-video flex items-center justify-center"
+        className="bg-black p-1 overflow-hidden aspect-video flex items-center justify-center"
         style={{ 
-          minHeight: '300px',
-          fontSize: isFullscreen ? '0.6vw' : 'inherit'
+          minHeight: '300px'
         }}
-      >
-        {frames.length > 0 ? renderCurrentFrame() : (
-          <div className="text-gray-500">No ASCII video loaded</div>
-        )}
+      >        <div className="w-full h-full flex items-center justify-center overflow-hidden">
+          <div 
+            className="ascii-wrapper w-fit h-fit flex items-center justify-center"
+            style={{
+              fontSize: calculateFontSize(),
+              transformOrigin: 'center',
+            }}
+          >            {frames.length > 0 ? renderCurrentFrame() : (
+              <div className="text-gray-500 text-center">
+                <div className="text-lg mb-2">No ASCII video loaded</div>
+                <div className="text-sm opacity-70">
+                  Upload a video and convert it to ASCII to see the scaling in action.
+                  <br />
+                  Check browser console for scaling debug information.
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      
-      {/* Controls */}
-      <div className={`bg-gray-900 p-3 ${isFullscreen ? 'absolute bottom-0 left-0 right-0 bg-opacity-75' : ''}`}>
+        {/* Controls */}
+      <div className={`bg-gray-900 p-3 ${isFullscreen ? 'absolute bottom-0 left-0 right-0 bg-opacity-75 z-10' : ''}`}>
         {/* Progress Bar */}
         <input
           type="range"

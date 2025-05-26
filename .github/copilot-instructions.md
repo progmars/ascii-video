@@ -14,8 +14,8 @@ The project is a web application that uses the following technologies:
 * Node.js
 * PWA
 
-Specifications are available in the doc folder - requirements followed by the version number. For example:
-* doc/requirements_v1.md
+Specifications are available in the docs folder - requirements followed by the version number. For example:
+* docs/requirements_v1.md
 
 # Deployment
-The project is deployed as a Github Pages Site
+The project is deployed as a Github Pages Site.
